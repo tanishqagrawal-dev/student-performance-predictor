@@ -125,13 +125,35 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- LOAD DATASET ---
+# --- DATA ENGINE ---
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv('sample_dataset.csv')
-        return df
-    except:
+        # Intern Note: Check if dataset exists, if not, generate it for seamless deployment
+        import os
+        if not os.path.exists('sample_dataset.csv'):
+            with st.spinner("Initializing first-time dataset..."):
+                n_samples = 500
+                np.random.seed(42)
+                study_h = np.random.uniform(1, 10, n_samples)
+                attendance = np.random.uniform(60, 100, n_samples)
+                assign_score = np.random.uniform(40, 100, n_samples)
+                prev_marks = np.random.uniform(30, 100, n_samples)
+                final_marks = (study_h * 4.5) + (attendance * 0.15) + (assign_score * 0.1) + (prev_marks * 0.2) + np.random.normal(0, 2, n_samples)
+                final_marks = np.clip(final_marks, 0, 100)
+                status = (final_marks >= 40).astype(int)
+                
+                new_df = pd.DataFrame({
+                    'Study_Hours': np.round(study_h, 1), 'Attendance': np.round(attendance, 1),
+                    'Assignment_Score': np.round(assign_score, 1), 'Previous_Marks': np.round(prev_marks, 1),
+                    'Final_Marks': np.round(final_marks, 1), 'Status': status
+                })
+                new_df.to_csv('sample_dataset.csv', index=False)
+                return new_df
+        
+        return pd.read_csv('sample_dataset.csv')
+    except Exception as e:
+        st.error(f"Data Error: {e}")
         return None
 
 df = load_data()

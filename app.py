@@ -11,19 +11,20 @@ import plotly.figure_factory as ff
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, r2_score
+from sklearn.metrics import accuracy_score, r2_score, mean_absolute_error, mean_squared_error, confusion_matrix
 
-# =================================================================
-# EduPredict AI — Internship Final Submission v4.5
-# =================================================================
+# -----------------------------------------------------------------
+# FINAL PROJECT: Student Performance Prediction System
+# Internship Submission - Machine Learning
+# -----------------------------------------------------------------
 
 st.set_page_config(
-    page_title="EduPredict AI | Student Performance Analytics",
+    page_title="Student Performance Predictor",
     page_icon="🎓",
     layout="wide"
 )
 
-# --- UTILITIES ---
+# Load Lottie animations for the UI
 def load_lottieurl(url: str):
     try:
         r = requests.get(url, timeout=5)
@@ -31,9 +32,9 @@ def load_lottieurl(url: str):
     except:
         return None
 
-lottie_loading = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_at6m99.json")
+loading_anim = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_at6m99.json")
 
-# --- PREMIUM CSS ---
+# --- Custom Styling ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap');
@@ -141,7 +142,7 @@ st.markdown("""
     </script>
 """, unsafe_allow_html=True)
 
-# --- PREDICTION LOGIC ---
+# Logic for calculating scores based on study habits
 def calculate_student_score(sh, at, sc, pm):
     score = (sh * 2.9) + (at * 0.20) + (sc * 0.25) + (pm * 0.30)
     bonus = 0
@@ -150,56 +151,68 @@ def calculate_student_score(sh, at, sc, pm):
     if pm >= 85: bonus += 4
     return round(np.clip(score + bonus, 0, 100), 1)
 
-# --- DATA ENGINE ---
+# Function to load or generate the student dataset
 @st.cache_data
-def generate_dataset():
-    np.random.seed(42)
-    n = 1000
-    hrs  = np.random.uniform(0,  12,  n)
-    att  = np.random.uniform(30, 100, n)
-    asgn = np.random.uniform(20, 100, n)
-    prev = np.random.uniform(20, 100, n)
-    mrks = []
-    for i in range(n):
-        base = calculate_student_score(hrs[i], att[i], asgn[i], prev[i])
-        mrks.append(np.clip(base + np.random.normal(0, 2.5), 0, 100))
-    df = pd.DataFrame({
-        'Study_Hours':      np.round(hrs,  1),
-        'Attendance':       np.round(att,  1),
-        'Assignment_Score': np.round(asgn, 1),
-        'Previous_Marks':   np.round(prev, 1),
-        'Final_Marks':      np.round(mrks, 1),
-        'Status':           (np.array(mrks) >= 40).astype(int)
-    })
-    # Human-readable label column for charts
+def load_dataset():
+    file_path = 'sample_dataset.csv'
+    if os.path.exists(file_path):
+        df = pd.read_csv(file_path)
+    else:
+        # Fallback to generation if CSV is missing
+        np.random.seed(42)
+        n = 1000
+        hrs  = np.random.uniform(0,  12,  n)
+        att  = np.random.uniform(30, 100, n)
+        asgn = np.random.uniform(20, 100, n)
+        prev = np.random.uniform(20, 100, n)
+        mrks = []
+        for i in range(n):
+            base = calculate_student_score(hrs[i], att[i], asgn[i], prev[i])
+            mrks.append(np.clip(base + np.random.normal(0, 2.5), 0, 100))
+        df = pd.DataFrame({
+            'Study_Hours':      np.round(hrs,  1),
+            'Attendance':       np.round(att,  1),
+            'Assignment_Score': np.round(asgn, 1),
+            'Previous_Marks':   np.round(prev, 1),
+            'Final_Marks':      np.round(mrks, 1),
+            'Status':           (np.array(mrks) >= 40).astype(int)
+        })
     df['Result'] = df['Status'].map({1: 'Pass', 0: 'Fail'})
     return df
 
-df = generate_dataset()
+df = load_dataset()
 
-# --- ML ENGINE ---
+# Training our Linear and Logistic Regression models
 @st.cache_resource
 def train_models(data):
     X = data[['Study_Hours', 'Attendance', 'Assignment_Score', 'Previous_Marks']]
     y_m = data['Final_Marks']
     X_train, X_test, y_m_train, y_m_test = train_test_split(X, y_m, test_size=0.2, random_state=42)
+    
     scaler     = StandardScaler()
     X_train_s  = scaler.fit_transform(X_train)
     X_test_s   = scaler.transform(X_test)
+    
     reg        = LinearRegression().fit(X_train_s, y_m_train)
     clf        = LogisticRegression(max_iter=1000).fit(X_train_s, data.loc[X_train.index, 'Status'])
-    r2         = r2_score(y_m_test, reg.predict(X_test_s)) * 100
-    acc        = accuracy_score(data.loc[X_test.index, 'Status'], clf.predict(X_test_s)) * 100
-    return reg, clf, scaler, r2, acc
+    
+    y_reg_pred = reg.predict(X_test_s)
+    r2         = r2_score(y_m_test, y_reg_pred) * 100
+    mae        = mean_absolute_error(y_m_test, y_reg_pred)
+    rmse       = np.sqrt(mean_squared_error(y_m_test, y_reg_pred))
+    
+    y_clf_pred = clf.predict(X_test_s)
+    acc        = accuracy_score(data.loc[X_test.index, 'Status'], y_clf_pred) * 100
+    cm         = confusion_matrix(data.loc[X_test.index, 'Status'], y_clf_pred)
+    
+    return reg, clf, scaler, r2, acc, mae, rmse, cm
 
-reg_model, clf_model, scaler, r2_val, acc_val = train_models(df)
+reg_model, clf_model, scaler, r2_val, acc_val, mae_val, rmse_val, cm_matrix = train_models(df)
 
-# ═══════════════════════════════════════════════
-#  SIDEBAR
-# ═══════════════════════════════════════════════
+# --- SIDEBAR INPUTS ---
 with st.sidebar:
-    st.markdown("<h2 style='color:#00d2ff; margin-top:0;'>EduPredict AI</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='opacity:0.6; font-size:0.85rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;'>Internship Submission v4.5</p>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color:#00d2ff; margin-top:0;'>EduPredict</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='opacity:0.6; font-size:0.85rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;'>Internship Project Submission</p>", unsafe_allow_html=True)
 
     st.markdown("### 👤 Student Profile")
     sh = st.slider("Daily Study Hours",    0.0, 12.0, 8.0, 0.5)
@@ -208,20 +221,29 @@ with st.sidebar:
     pm = st.slider("Previous Semester %",  0,   100,  80)
 
     st.markdown("---")
+    with st.expander("📐 Mathematical Logic"):
+        st.markdown("""
+            **Score Equation:**  
+            `Marks = (Hrs×2.9) + (Att×0.2) + (Asgn×0.25) + (Prev×0.3)`
+            
+            **Bonus Multipliers:**
+            - Att > 90% : +3.0
+            - Asgn > 90% : +3.0
+            - Prev > 85% : +4.0
+        """)
+    
     predict_btn = st.button("🚀 PREDICT PERFORMANCE")
 
-# ═══════════════════════════════════════════════
-#  HEADER
-# ═══════════════════════════════════════════════
+# --- MAIN HEADER ---
 st.markdown(
     "<h1 style='text-align:center; font-size:2.9rem; letter-spacing:-1px;'>"
-    "AI Powered <span style='color:#00d2ff;' class='neon-text'>Student Performance Prediction System</span>"
+    "Student <span style='color:#00d2ff;' class='neon-text'>Performance Prediction</span> System"
     "</h1>",
     unsafe_allow_html=True
 )
 st.markdown(
     "<p style='text-align:center; opacity:0.6; font-size:1.05rem; margin-bottom:36px;'>"
-    "Advanced Machine Learning Academic Analytics Platform</p>",
+    "A Machine Learning approach to predicting academic results</p>",
     unsafe_allow_html=True
 )
 
@@ -251,8 +273,8 @@ with m3:
     st.markdown(
         f"<div class='glass-card'>"
         f"<p style='opacity:0.6; margin-bottom:10px; font-weight:500; font-size:0.95rem;'>System Status</p>"
-        f"<h3 style='color:#00ff99; line-height:1.3; margin:0;' class='neon-text-green'>ACADEMIC ANALYTICS<br>● ACTIVE</h3>"
-        f"<p style='opacity:0.5; font-size:0.8rem; margin-top:8px;'>Models Loaded &amp; Ready</p>"
+        f"<h3 style='color:#00ff99; line-height:1.3; margin:0;' class='neon-text-green'>PREDICTOR MODULE<br>● ACTIVE</h3>"
+        f"<p style='opacity:0.5; font-size:0.8rem; margin-top:8px;'>Models ready for input</p>"
         f"</div>",
         unsafe_allow_html=True
     )
@@ -265,11 +287,11 @@ if predict_btn:
         loading_ph = st.empty()
         with loading_ph:
             st.markdown("<div style='text-align:center; padding:30px;'>", unsafe_allow_html=True)
-            if lottie_loading:
-                st_lottie(lottie_loading, height=100)
+            if loading_anim:
+                st_lottie(loading_anim, height=100)
             st.markdown(
                 "<p style='color:#00d2ff; font-weight:600; font-size:1.2rem;'>"
-                "Generating predictive analytics...</p></div>",
+                "Calculating results...</p></div>",
                 unsafe_allow_html=True
             )
             time.sleep(1.2)
@@ -301,12 +323,16 @@ if predict_btn:
                 unsafe_allow_html=True
             )
 
-        # --- AI Insights (fixed: all content in ONE markdown call) ---
         ins = []
         if sh >= 8:    ins.append("<b>Study Discipline:</b> Your consistent study routine is a primary driver for success.")
         if at >= 90:   ins.append("<b>Attendance Impact:</b> High class presence significantly stabilizes projected marks.")
         if sc >= 85:   ins.append("<b>Assignment Excellence:</b> Practical performance is contributing positively to your profile.")
-        if score >= 85:ins.append("<b>Distinction Probability:</b> Profile indicates a high probability of distinction-level performance.")
+        
+        if not is_pass:
+            ins.append("<b>Improvement Area:</b> Consider increasing daily study hours by 1.5 - 2h to reach pass threshold.")
+            ins.append("<b>Academic Support:</b> Review previous semester weak areas to boost the 'Previous Marks' factor.")
+        elif score >= 85:
+            ins.append("<b>Distinction Probability:</b> Profile indicates a high probability of distinction-level performance.")
 
         if ins:
             items_html = "".join(
@@ -314,19 +340,17 @@ if predict_btn:
             )
             st.markdown(
                 f"<div class='glass-card-left' style='width:100%;'>"
-                f"<h3 style='margin-bottom:18px;'>💡 AI Intelligence Insights</h3>"
+                f"<h3 style='margin-bottom:18px;'>💡 Performance Feedback</h3>"
                 f"{items_html}"
                 f"</div>",
                 unsafe_allow_html=True
             )
 
-# ═══════════════════════════════════════════════
-#  ANALYTICS HUB
-# ═══════════════════════════════════════════════
+# --- DATA VISUALIZATION SECTION ---
 st.markdown("---")
-st.markdown("## 📊 Performance Visualization Hub")
+st.markdown("## 📊 Performance Analytics Hub")
 
-tab1, tab2, tab3 = st.tabs(["🚀 Regression Analysis", "🔥 Feature Heatmap", "📊 Score Distribution"])
+tab1, tab2, tab3, tab4 = st.tabs(["🚀 Regression Analysis", "🔥 Feature Heatmap", "📊 Score Distribution", "🔬 Model Diagnostics"])
 
 with tab1:
     fig1 = px.scatter(
@@ -378,6 +402,32 @@ with tab3:
     )
     st.plotly_chart(fig3, use_container_width=True)
 
+with tab4:
+    d1, d2 = st.columns(2)
+    with d1:
+        st.markdown(f"""
+            <div style='background:rgba(255,255,255,0.05); padding:20px; border-radius:15px; border-left:4px solid #00d2ff;'>
+                <h4 style='margin-top:0;'>📈 Regression Error Metrics</h4>
+                <p style='margin-bottom:8px;'><b>MAE:</b> {mae_val:.2f}</p>
+                <p style='margin-bottom:8px;'><b>RMSE:</b> {rmse_val:.2f}</p>
+                <p style='font-size:0.8rem; opacity:0.6;'>Lower values indicate higher prediction precision.</p>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with d2:
+        fig_cm = px.imshow(
+            cm_matrix,
+            text_auto=True,
+            labels=dict(x="Predicted", y="Actual", color="Count"),
+            x=['Fail', 'Pass'],
+            y=['Fail', 'Pass'],
+            color_continuous_scale='Greens',
+            template='plotly_dark',
+            title="Confusion Matrix (Classifier)"
+        )
+        fig_cm.update_layout(height=250, margin=dict(l=0, r=0, t=40, b=0))
+        st.plotly_chart(fig_cm, use_container_width=True)
+
 # ═══════════════════════════════════════════════
 #  INFO CARDS
 # ═══════════════════════════════════════════════
@@ -409,19 +459,30 @@ with i2:
         unsafe_allow_html=True
     )
 
-# ═══════════════════════════════════════════════
-#  FOOTER
-# ═══════════════════════════════════════════════
+# --- FOOTER ---
 st.markdown("""
-    <div style='text-align:center; padding:50px 0 30px; border-top:1px solid rgba(255,255,255,0.06); margin-top:20px;'>
-        <p style='font-size:1.1rem; font-weight:700; opacity:0.85; margin-bottom:8px;'>
-            Developed as a Machine Learning Internship Project
+    <div style='text-align:center; padding:50px 0 30px; border-top:1px solid rgba(255,255,255,0.08); margin-top:50px; background: rgba(255, 255, 255, 0.01); border-radius: 30px 30px 0 0;'>
+        <p style='font-size:1.2rem; font-weight:700; color: #00d2ff; margin-bottom:10px; letter-spacing: 1px;'>
+            STUDENT PERFORMANCE PREDICTOR
         </p>
-        <p style='font-size:0.88rem; opacity:0.55;'>
-            Python &nbsp;•&nbsp; Streamlit &nbsp;•&nbsp; Scikit-learn &nbsp;•&nbsp; Plotly &nbsp;•&nbsp; Pandas &nbsp;•&nbsp; NumPy
+        <p style='font-size:0.95rem; opacity:0.8; margin-bottom:15px; font-weight: 500;'>
+            Developed by <span style='color: #00ff99;'>Tanishq Agrawal</span> | Machine Learning Intern
         </p>
-        <p style='font-size:0.78rem; opacity:0.4; margin-top:10px;'>
-            © 2024 EduPredict AI | Advanced Academic Analytics Platform
+        <div style='display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; opacity: 0.6;'>
+            <span style='font-size: 0.85rem;'>Python</span>
+            <span style='font-size: 0.85rem;'>•</span>
+            <span style='font-size: 0.85rem;'>Pandas</span>
+            <span style='font-size: 0.85rem;'>•</span>
+            <span style='font-size: 0.85rem;'>NumPy</span>
+            <span style='font-size: 0.85rem;'>•</span>
+            <span style='font-size: 0.85rem;'>Scikit-Learn</span>
+            <span style='font-size: 0.85rem;'>•</span>
+            <span style='font-size: 0.85rem;'>Streamlit</span>
+            <span style='font-size: 0.85rem;'>•</span>
+            <span style='font-size: 0.85rem;'>Plotly</span>
+        </div>
+        <p style='font-size:0.8rem; opacity:0.4;'>
+            © 2026 | Academic Analytics Internship Project | Final Submission
         </p>
     </div>
 """, unsafe_allow_html=True)

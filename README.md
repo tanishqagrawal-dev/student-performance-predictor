@@ -1,4 +1,4 @@
-# EduPredict AI — Student Performance Prediction System 🎓
+# Student Performance Prediction System 🎓
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B)](https://streamlit.io/)
@@ -6,33 +6,31 @@
 [![Plotly](https://img.shields.io/badge/Plotly-Interactive%20Charts-3F4F75)](https://plotly.com/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-> **Developed as a Machine Learning Internship Project**  
-> Predicts whether a student will **Pass or Fail**, and estimates **final marks**, based on study habits and academic behaviour.
+> **Machine Learning Internship Project**  
+> This project predicts whether a student will **Pass or Fail**, and estimates their **final marks** based on study habits and academic data.
 
 ---
 
-## 📌 Project Overview
+This project is a web application built using Python and Streamlit. It covers the entire machine learning process — from generating the data and cleaning it, to training models and showing the results on an interactive dashboard.
 
-**EduPredict AI** is a full end-to-end Machine Learning web application built using Python and Streamlit. It demonstrates a complete ML pipeline — from data generation and preprocessing, through exploratory data analysis (EDA) and model training, to live interactive predictions.
-
-The project fulfils all requirements of the **Machine Learning Internship — Project 1: Student Performance Prediction System**.
+It is submitted as part of the **Machine Learning Internship — Project 1**.
 
 ---
 
-## 🎯 Objective
+## 🎯 Project Objective
 
-> *Predict whether a student will pass/fail or estimate marks based on study habits.*
+The goal of this project is to predict if a student will pass or fail based on their study habits and previous marks.
 
-The system accepts four student profile inputs:
+Features used:
 - 📚 Daily Study Hours
 - 🏫 Attendance Rate (%)
 - 📝 Assignment Score
 - 📊 Previous Semester Marks
 
-And outputs:
-- ✅ **Pass / Fail prediction** with confidence percentage
-- 📈 **Projected final marks** out of 100
-- 💡 **AI-generated insights** based on the student profile
+Outputs:
+- ✅ **Pass / Fail prediction**
+- 📈 **Estimated final marks** (out of 100)
+- 💡 **Performance Feedback** based on the inputs
 
 ---
 
@@ -44,7 +42,8 @@ And outputs:
 | 2 | **Exploratory Data Analysis (EDA)** | 3 interactive Plotly charts (Scatter, Heatmap, Histogram) |
 | 3 | **Linear Regression** | `sklearn.LinearRegression` — predicts final score (continuous output) |
 | 4 | **Logistic Regression** | `sklearn.LogisticRegression` — classifies Pass (1) / Fail (0) |
-| 5 | **Feature Scaling** | `StandardScaler` applied to all 4 input features before model training |
+| 4 | **Feature Scaling** | `StandardScaler` applied to all 4 input features before model training |
+| 5 | **Error Diagnostics**| `MAE`, `RMSE`, and `Confusion Matrix` for deep model evaluation |
 
 ---
 
@@ -54,8 +53,9 @@ Following the internship project specification:
 
 **Step 1 — Load Dataset using Pandas**
 ```
-1,000 synthetic student records generated with NumPy (seed=42 for reproducibility)
-Loaded into a pandas DataFrame with 6 columns
+- Prioritizes loading 'sample_dataset.csv' from disk
+- Falling back to NumPy generation if file is missing (seed=42)
+- 1,000 synthetic records with realistic academic distributions
 ```
 
 **Step 2 — Clean and Preprocess Data**
@@ -81,8 +81,8 @@ Loaded into a pandas DataFrame with 6 columns
 
 **Step 5 — Train Model and Evaluate Accuracy**
 ```
-- Linear Regression  →  R² Score: ~96%
-- Logistic Regression →  Classifier Accuracy: ~97%
+- Linear Regression  →  R² Score: ~96% (Evaluated with MAE & RMSE)
+- Logistic Regression →  Classifier Accuracy: ~97% (Verified with Confusion Matrix)
 ```
 
 ---
@@ -101,11 +101,11 @@ Loaded into a pandas DataFrame with 6 columns
 ## 🎯 Key Features
 
 - **Real-time Prediction** — Adjust sliders to see instant Pass/Fail + score results
-- **AI Smart Insights** — Contextual feedback based on student profile inputs
-- **3 EDA Visualizations** — Scatter (OLS), Heatmap, Score Distribution
-- **Model Accuracy Display** — R² and Classifier Accuracy shown as metric cards
-- **Premium Glassmorphism UI** — Dark mode with neon accents and particle animations
-- **Confidence Scoring** — Model certainty shown for every prediction
+- **Performance Feedback** — Helpful tips based on student inputs
+- **3 Visualization Charts** — Scatter plot, Heatmap, and Score Distribution
+- **Model Diagnostics** — Confusion Matrix, MAE, and RMSE metrics
+- **Interactive Dashboard** — Built with Streamlit and custom CSS for a modern look
+- **Math Logic** — Expandable section explaining the scoring formula
 
 ---
 
@@ -175,16 +175,7 @@ http://localhost:8501
 
 ---
 
-## 👨‍💻 Internship Project Note
-
-This system was developed to demonstrate end-to-end Machine Learning skills, from raw data generation through to a fully deployed interactive application. It is designed to be clearly explained during a technical interview or viva, covering:
-
-- Why **StandardScaler** is used before training (feature normalization prevents scale bias)
-- Why **two separate models** are used (regression for continuous output, classification for binary)
-- Why **synthetic data** with `seed=42` ensures reproducibility across environments
-- How **R² score** and **Accuracy** are computed on the held-out test set, not training data
-
 ---
 
-**Developed as a Machine Learning Internship Project**  
+**Internship Project Submission**  
 Python • Streamlit • Scikit-learn • Plotly • Pandas • NumPy

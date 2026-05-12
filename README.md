@@ -116,7 +116,7 @@ Following the internship project specification:
 ## ▶️ Run Locally
 
 ```bash
-git clone <repository-link>
+git clone <[repository-link](https://github.com/tanishqagrawal-dev/student-performance-predictor)>
 cd student-performance-predictor
 
 pip install -r requirements.txt

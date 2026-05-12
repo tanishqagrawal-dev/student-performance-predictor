@@ -38,6 +38,19 @@ Outputs:
 
 ---
 
+## 📸 Project Screenshots
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Analytics
+![Analytics](screenshots/analytics.png)
+
+### Heatmap
+![Heatmap](screenshots/heatmap.png)
+
+---
+
 ## 🧠 ML Concepts & Criteria Compliance
 This project strictly follows the required workflow for the internship:
 
@@ -110,6 +123,42 @@ Following the internship project specification:
 - **Model Diagnostics** — Confusion Matrix, MAE, and RMSE metrics
 - **Interactive Dashboard** — Built with Streamlit and custom CSS for a modern look
 - **Math Logic** — Expandable section explaining the scoring formula
+
+---
+
+## ▶️ Run Locally
+
+```bash
+git clone <repository-link>
+cd student-performance-predictor
+
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+---
+
+## 🚀 Future Improvements
+
+- Add Deep Learning Models for higher accuracy
+- Add Student Report Export (PDF/Excel)
+- Add Multi-student Batch Prediction
+- Add Performance Tracking Dashboard over time
+
+---
+
+## 🌐 Deployment
+
+Deployed using **Streamlit Cloud**.
+
+**Live Application:**  
+👉 [student-performance-predictor.streamlit.app](https://student-performance-predictor-to9scdaeabdvtdbww6askc.streamlit.app/)
+
+---
+
+## 📜 License
+
+This project is developed for educational and internship purposes.
 
 ---
 

@@ -1,12 +1,16 @@
 # Student Performance Prediction System 🎓
+### *Minor Internship Project: Educational Analytics & Performance Forecasting*
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://student-performance-predictor-to9scdaeabdvtdbww6askc.streamlit.app/)
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
-[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange)](https://scikit-learn.org/)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-App-FF4B4B?style=flat-square&logo=streamlit)](https://student-performance-predictor-to9scdaeabdvtdbww6askc.streamlit.app/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-black?style=flat-square&logo=github)](https://github.com/tanishqagrawal-dev/student-performance-predictor)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python)](https://www.python.org/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?style=flat-square&logo=scikit-learn)](https://scikit-learn.org/)
 
-### 🚀 Live Demo
-**View the live application here:**  
-👉 **[student-performance-predictor.streamlit.app](https://student-performance-predictor-to9scdaeabdvtdbww6askc.streamlit.app/)**
+---
+
+## 🔗 Project Links
+- **Live Demo:** [Student Performance Predictor](https://student-performance-predictor-to9scdaeabdvtdbww6askc.streamlit.app/)
+- **Source Code:** [GitHub Repository](https://github.com/tanishqagrawal-dev/student-performance-predictor)
 
 ---
 

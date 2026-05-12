@@ -127,7 +127,7 @@ streamlit run app.py
 
 ## 🚀 Future Improvements
 
-- Add Deep Learning Models for higher accuracy
+- Explore advanced ensemble learning models
 - Add Student Report Export (PDF/Excel)
 - Add Multi-student Batch Prediction
 - Add Performance Tracking Dashboard over time

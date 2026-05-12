@@ -38,19 +38,6 @@ Outputs:
 
 ---
 
-## 📸 Project Screenshots
-
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-
-### Analytics
-![Analytics](screenshots/analytics.png)
-
-### Heatmap
-![Heatmap](screenshots/heatmap.png)
-
----
-
 ## 🧠 ML Concepts & Criteria Compliance
 This project strictly follows the required workflow for the internship:
 

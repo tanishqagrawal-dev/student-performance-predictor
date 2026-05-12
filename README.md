@@ -1,10 +1,14 @@
 # Student Performance Prediction System 🎓
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://student-performance-predictor-to9scdaeabdvtdbww6askc.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B)](https://streamlit.io/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange)](https://scikit-learn.org/)
-[![Plotly](https://img.shields.io/badge/Plotly-Interactive%20Charts-3F4F75)](https://plotly.com/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
+### 🚀 Live Demo
+**View the live application here:**  
+👉 **[student-performance-predictor.streamlit.app](https://student-performance-predictor-to9scdaeabdvtdbww6askc.streamlit.app/)**
+
+---
 
 > **Machine Learning Internship Project**  
 > This project predicts whether a student will **Pass or Fail**, and estimates their **final marks** based on study habits and academic data.
@@ -34,16 +38,16 @@ Outputs:
 
 ---
 
-## 🧠 ML Concepts Demonstrated
+## 🧠 ML Concepts & Criteria Compliance
+This project strictly follows the required workflow for the internship:
 
 | # | Concept | Implementation |
 |---|---|---|
-| 1 | **Data Preprocessing** | Feature clipping, rounding, normalization via `StandardScaler` |
-| 2 | **Exploratory Data Analysis (EDA)** | 3 interactive Plotly charts (Scatter, Heatmap, Histogram) |
-| 3 | **Linear Regression** | `sklearn.LinearRegression` — predicts final score (continuous output) |
-| 4 | **Logistic Regression** | `sklearn.LogisticRegression` — classifies Pass (1) / Fail (0) |
-| 4 | **Feature Scaling** | `StandardScaler` applied to all 4 input features before model training |
-| 5 | **Error Diagnostics**| `MAE`, `RMSE`, and `Confusion Matrix` for deep model evaluation |
+| 1 | **Data Preprocessing** | Feature clipping, rounding, and cleaning |
+| 2 | **Exploratory Data Analysis** | 3 interactive Plotly charts (Scatter, Heatmap, Histogram) |
+| 3 | **Linear Regression** | Predicts the continuous **Final Score** |
+| 4 | **Logistic Regression** | Classifies the result as **Pass** or **Fail** |
+| 5 | **Feature Scaling** | `StandardScaler` applied for data normalization |
 
 ---
 
@@ -135,31 +139,6 @@ student-performance-predictor/
 
 ---
 
-## ⚙️ How to Run Locally
-
-**1. Clone the repository:**
-```bash
-git clone https://github.com/your-username/student-performance-predictor.git
-cd student-performance-predictor
-```
-
-**2. Install dependencies:**
-```bash
-pip install -r requirements.txt
-```
-
-**3. Run the application:**
-```bash
-python -m streamlit run app.py
-```
-
-**4. Open in browser:**
-```
-http://localhost:8501
-```
-
----
-
 ## 📦 Dataset Details
 
 | Property | Value |
@@ -175,7 +154,6 @@ http://localhost:8501
 
 ---
 
----
-
-**Internship Project Submission**  
-Python • Streamlit • Scikit-learn • Plotly • Pandas • NumPy
+**Internship Project Submission — 2026**  
+**Developed by Tanishq Agrawal**  
+Python • Pandas • NumPy • Scikit-learn • Streamlit • Plotly
